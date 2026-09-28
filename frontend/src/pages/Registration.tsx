@@ -113,7 +113,7 @@ const Registration = () => {
             
             return (
               <div key={ship.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <h2 style={{ fontSize: '2.5rem', textShadow: '2px 2px 8px #000', marginBottom: '1rem', textAlign: 'center' }}>{ship.name}</h2>
+                <h2 style={{ fontSize: '2.5rem', textShadow: '2px 2px 8px #000', marginBottom: '1rem', textAlign: 'center', whiteSpace: 'nowrap' }}>{ship.name}</h2>
                 <div 
                   className={`ship-container ${shipClasses[ship.id]}`}
                   style={{ backgroundImage: `url(${shipImages[ship.id]})`, width: '100%' }}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import OceanBackground from './components/OceanBackground';
+import LiveBackground from './components/LiveBackground';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Registration from './pages/Registration';
@@ -30,11 +31,25 @@ const Navigation = () => {
   );
 };
 
+const BackgroundManager = () => {
+  const location = useLocation();
+  
+  if (location.pathname === '/register') {
+    return (
+      <>
+        <OceanBackground />
+        <div className="grand-line-map"></div>
+      </>
+    );
+  }
+
+  return <LiveBackground />;
+};
+
 function App() {
   return (
     <Router>
-      <OceanBackground />
-      <div className="grand-line-map"></div>
+      <BackgroundManager />
       <Navigation />
       <div className="main-content">
         <Routes>

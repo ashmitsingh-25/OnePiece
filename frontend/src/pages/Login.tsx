@@ -22,16 +22,8 @@ const Login = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundImage: `url('/whitebeard_bg.jpg')`, // We'll put the image in public
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
       position: 'relative'
     }}>
-      <div style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: 'rgba(7, 30, 61, 0.7)'
-      }}></div>
       
       <div className="card" style={{ zIndex: 1, maxWidth: '500px', width: '90%', textAlign: 'center' }}>
         <h1 style={{ fontSize: '3rem', marginBottom: '0.5rem', textShadow: '2px 2px 4px #000' }}>WELCOME ABOARD</h1>

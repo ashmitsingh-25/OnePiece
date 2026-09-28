@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 
 const Dashboard = () => {
   const [data, setData] = useState<any>(null);
@@ -36,7 +37,7 @@ const Dashboard = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3001/api/registration/${regId}`);
+      const res = await fetch(`${API_URL}/registration/${regId}`);
       if (res.ok) {
         const json = await res.json();
         setData(json);
@@ -52,7 +53,7 @@ const Dashboard = () => {
 
   const handleAction = async (action: string) => {
     try {
-      await fetch('http://localhost:3001/api/action', {
+      await fetch(`${API_URL}/action`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: data.id, action })

@@ -14,26 +14,26 @@ const OFFER_DURATION_MS = 10 * 60 * 1000;
 function offerNextSeat(shipId: number) {
   // Check if we have an available seat
   const ship = db.prepare('SELECT capacity FROM ships WHERE id = ?').get(shipId) as any;
-  const confirmed = db.prepare('SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status IN ("CONFIRMED", "OFFERED")').get(shipId) as any;
+  const confirmed = db.prepare(`SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status IN ('CONFIRMED', 'OFFERED')`).get(shipId) as any;
   
   if (confirmed.count >= ship.capacity) return; // No seats available
 
   // Find next waitlisted
-  const nextInLine = db.prepare('SELECT id FROM registrations WHERE ship_id = ? AND status = "WAITLISTED" ORDER BY created_at ASC LIMIT 1').get(shipId) as any;
+  const nextInLine = db.prepare(`SELECT id FROM registrations WHERE ship_id = ? AND status = 'WAITLISTED' ORDER BY created_at ASC LIMIT 1`).get(shipId) as any;
   
   if (nextInLine) {
     const expiresAt = Date.now() + OFFER_DURATION_MS;
-    db.prepare('UPDATE registrations SET status = "OFFERED", expires_at = ? WHERE id = ?').run(expiresAt, nextInLine.id);
+    db.prepare(`UPDATE registrations SET status = 'OFFERED', expires_at = ? WHERE id = ?`).run(expiresAt, nextInLine.id);
   }
 }
 
 // Background job to expire offers
 setInterval(() => {
   const now = Date.now();
-  const expiredOffers = db.prepare('SELECT id, ship_id FROM registrations WHERE status = "OFFERED" AND expires_at <= ?').all(now) as any[];
+  const expiredOffers = db.prepare(`SELECT id, ship_id FROM registrations WHERE status = 'OFFERED' AND expires_at <= ?`).all(now) as any[];
   
   for (const offer of expiredOffers) {
-    db.prepare('UPDATE registrations SET status = "EXPIRED" WHERE id = ?').run(offer.id);
+    db.prepare(`UPDATE registrations SET status = 'EXPIRED' WHERE id = ?`).run(offer.id);
     offerNextSeat(offer.ship_id);
   }
 }, 5000); // Check every 5 seconds
@@ -43,9 +43,9 @@ setInterval(() => {
 app.get('/api/ships', (req, res) => {
   const ships = db.prepare('SELECT * FROM ships').all() as any[];
   const stats = ships.map(ship => {
-    const confirmed = db.prepare('SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status = "CONFIRMED"').get(ship.id) as any;
-    const offered = db.prepare('SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status = "OFFERED"').get(ship.id) as any;
-    const waitlisted = db.prepare('SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status = "WAITLISTED"').get(ship.id) as any;
+    const confirmed = db.prepare(`SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status = 'CONFIRMED'`).get(ship.id) as any;
+    const offered = db.prepare(`SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status = 'OFFERED'`).get(ship.id) as any;
+    const waitlisted = db.prepare(`SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status = 'WAITLISTED'`).get(ship.id) as any;
     
     return {
       ...ship,
@@ -70,7 +70,7 @@ app.post('/api/register', (req, res) => {
     const ship = db.prepare('SELECT capacity FROM ships WHERE id = ?').get(shipId) as any;
     if (!ship) return res.status(404).json({ error: "Ship not found" });
 
-    const occupied = db.prepare('SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status IN ("CONFIRMED", "OFFERED")').get(shipId) as any;
+    const occupied = db.prepare(`SELECT COUNT(*) as count FROM registrations WHERE ship_id = ? AND status IN ('CONFIRMED', 'OFFERED')`).get(shipId) as any;
     
     let status = "WAITLISTED";
     let expiresAt = null;
@@ -101,7 +101,7 @@ app.get('/api/registration/:id', (req, res) => {
   let peopleAhead = null;
   
   if (reg.status === "WAITLISTED") {
-    const queue = db.prepare('SELECT id FROM registrations WHERE ship_id = ? AND status = "WAITLISTED" ORDER BY created_at ASC').all(reg.ship_id) as any[];
+    const queue = db.prepare(`SELECT id FROM registrations WHERE ship_id = ? AND status = 'WAITLISTED' ORDER BY created_at ASC`).all(reg.ship_id) as any[];
     const index = queue.findIndex(q => q.id === id);
     if (index !== -1) {
       queuePosition = index + 1;
@@ -119,14 +119,14 @@ app.post('/api/action', (req, res) => {
   if (!reg) return res.status(404).json({ error: "Not found" });
 
   if (action === "ACCEPT" && reg.status === "OFFERED") {
-    db.prepare('UPDATE registrations SET status = "CONFIRMED", expires_at = NULL WHERE id = ?').run(id);
+    db.prepare(`UPDATE registrations SET status = 'CONFIRMED', expires_at = NULL WHERE id = ?`).run(id);
     res.json({ success: true });
   } else if (action === "DECLINE" && reg.status === "OFFERED") {
-    db.prepare('UPDATE registrations SET status = "DECLINED", expires_at = NULL WHERE id = ?').run(id);
+    db.prepare(`UPDATE registrations SET status = 'DECLINED', expires_at = NULL WHERE id = ?`).run(id);
     offerNextSeat(reg.ship_id);
     res.json({ success: true });
   } else if (action === "CANCEL" && reg.status === "CONFIRMED") {
-    db.prepare('UPDATE registrations SET status = "CANCELLED" WHERE id = ?').run(id);
+    db.prepare(`UPDATE registrations SET status = 'CANCELLED' WHERE id = ?`).run(id);
     offerNextSeat(reg.ship_id);
     res.json({ success: true });
   } else {
@@ -138,7 +138,7 @@ app.post('/api/admin/simulate_expire', (req, res) => {
   const { id } = req.body;
   const reg = db.prepare('SELECT * FROM registrations WHERE id = ?').get(id) as any;
   if (reg && reg.status === "OFFERED") {
-    db.prepare('UPDATE registrations SET status = "EXPIRED", expires_at = NULL WHERE id = ?').run(id);
+    db.prepare(`UPDATE registrations SET status = 'EXPIRED', expires_at = NULL WHERE id = ?`).run(id);
     offerNextSeat(reg.ship_id);
     res.json({ success: true });
   } else {

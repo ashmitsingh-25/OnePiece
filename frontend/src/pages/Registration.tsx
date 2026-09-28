@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 
 const shipImages: Record<number, string> = {
   1: '/luffy_ship.jpg',
@@ -36,11 +37,13 @@ const Registration = () => {
 
   const fetchShips = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/ships');
+      const res = await fetch(`${API_URL}/ships`);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       setShips(data);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setError('Failed to load ships: ' + e.message);
     }
   };
 
@@ -49,7 +52,7 @@ const Registration = () => {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:3001/api/register', {
+      const res = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pirateName, fullName, email, phoneNumber, shipId: selectedShip.id })
@@ -93,12 +96,18 @@ const Registration = () => {
           </p>
         </div>
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
-          gap: '3rem' 
-        }}>
-          {ships.map(ship => {
+        {ships.length === 0 ? (
+          <div style={{ textAlign: 'center', marginTop: '3rem', fontSize: '1.5rem', color: 'var(--gold)' }}>
+            <p>Loading the fleet...</p>
+            {error && <p className="red-text">{error}</p>}
+          </div>
+        ) : (
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+            gap: '3rem' 
+          }}>
+            {ships.map(ship => {
             const isFull = ship.totalOccupied >= ship.capacity;
             const percentage = (ship.totalOccupied / ship.capacity) * 100;
             
@@ -141,6 +150,7 @@ const Registration = () => {
             );
           })}
         </div>
+        )}
       </div>
     );
   }

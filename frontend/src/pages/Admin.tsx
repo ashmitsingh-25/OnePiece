@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 const Admin = () => {
   const [ships, setShips] = useState<any[]>([]);
@@ -12,11 +13,11 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
-      const resShips = await fetch('http://localhost:3001/api/ships');
+      const resShips = await fetch(`${API_URL}/ships`);
       const dataShips = await resShips.json();
       setShips(dataShips);
 
-      const resRegs = await fetch('http://localhost:3001/api/admin/all');
+      const resRegs = await fetch(`${API_URL}/admin/all`);
       const dataRegs = await resRegs.json();
       setRegistrations(dataRegs);
     } catch (e) {
@@ -26,7 +27,7 @@ const Admin = () => {
 
   const handleSimulateExpire = async (id: string) => {
     try {
-      await fetch('http://localhost:3001/api/admin/simulate_expire', {
+      await fetch(`${API_URL}/admin/simulate_expire`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id })
@@ -39,7 +40,7 @@ const Admin = () => {
 
   const handleCancel = async (id: string) => {
     try {
-      await fetch('http://localhost:3001/api/action', {
+      await fetch(`${API_URL}/action`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, action: 'CANCEL' })
@@ -52,7 +53,7 @@ const Admin = () => {
 
   const handleAccept = async (id: string) => {
     try {
-      await fetch('http://localhost:3001/api/action', {
+      await fetch(`${API_URL}/action`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, action: 'ACCEPT' })

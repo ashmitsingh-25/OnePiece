@@ -77,7 +77,8 @@ const Dashboard = () => {
     if (shipName.includes('SUNNY')) return '🏴‍☠️';
     if (shipName.includes('TANG')) return '⚓';
     if (shipName.includes('FORCE')) return '🏴';
-    return '🐉';
+    if (shipName.includes('MOBY')) return '🐋';
+    return '🏴‍☠️';
   };
 
   const shipIcon = getShipIcon(registration.ship.name);

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { API_URL } from './config';
 import LiveBackground from './components/LiveBackground';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -10,6 +11,36 @@ import Admin from './pages/Admin';
 
 const Navigation = () => {
   const location = useLocation();
+  const [balance, setBalance] = useState(125000);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      const regId = localStorage.getItem('registrationId');
+      if (!regId) {
+        setBalance(125000);
+        return;
+      }
+      try {
+        const res = await fetch(`${API_URL}/registration/${regId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'CONFIRMED' || data.status === 'OFFERED') {
+            setBalance(125000 - (data.ship?.price || 15000));
+          } else {
+            setBalance(125000);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    
+    fetchBalance();
+    // Set up an interval to keep it updated when they register/cancel
+    const interval = setInterval(fetchBalance, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   if (location.pathname === '/') return null; // No nav on login page
 
   return (
@@ -27,7 +58,7 @@ const Navigation = () => {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <div style={{ color: 'var(--gold)', fontWeight: 'bold', textShadow: '1px 1px 2px #000' }}>
-            💰 125,000 Berries
+            💰 {balance.toLocaleString()} Berries
           </div>
         </div>
       </nav>

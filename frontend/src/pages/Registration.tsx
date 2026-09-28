@@ -112,14 +112,14 @@ const Registration = () => {
             const percentage = (ship.totalOccupied / ship.capacity) * 100;
             
             return (
-              <div 
-                key={ship.id} 
-                className={`ship-container ${shipClasses[ship.id]}`}
-                style={{ backgroundImage: `url(${shipImages[ship.id]})` }}
-                onClick={() => setSelectedShip(ship)}
-              >
-                <div className="ship-content">
-                  <h2 style={{ fontSize: '2.5rem', textShadow: '2px 2px 8px #000', marginBottom: '1rem' }}>{ship.name}</h2>
+              <div key={ship.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <h2 style={{ fontSize: '2.5rem', textShadow: '2px 2px 8px #000', marginBottom: '1rem', textAlign: 'center' }}>{ship.name}</h2>
+                <div 
+                  className={`ship-container ${shipClasses[ship.id]}`}
+                  style={{ backgroundImage: `url(${shipImages[ship.id]})`, width: '100%' }}
+                  onClick={() => setSelectedShip(ship)}
+                >
+                  <div className="ship-content">
                   
                   <div style={{ background: 'rgba(0,0,0,0.7)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--gold)' }}>
                     <div className="progress-container" style={{ marginBottom: '1rem' }}>
@@ -155,6 +155,7 @@ const Registration = () => {
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
             );
           })}

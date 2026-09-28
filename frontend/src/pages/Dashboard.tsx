@@ -7,7 +7,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [timeRemaining, setTimeRemaining] = useState('');
-  const [countdown, setCountdown] = useState({ d: '05', h: '16', m: '41', s: '08' });
+  const [countdown, setCountdown] = useState({ d: '00', h: '00', m: '00', s: '00' });
+  const [departureInput, setDepartureInput] = useState('2026-10-04T08:00');
+  const [targetDate, setTargetDate] = useState<Date>(() => new Date('2026-10-04T08:00'));
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,19 +19,29 @@ const Dashboard = () => {
     // Live countdown tick
     const cdTimer = setInterval(() => {
       const now = new Date();
-      setCountdown({
-        d: '05',
-        h: String(now.getHours()).padStart(2, '0'),
-        m: String(now.getMinutes()).padStart(2, '0'),
-        s: String(now.getSeconds()).padStart(2, '0'),
-      });
+      const diff = targetDate.getTime() - now.getTime();
+      
+      if (diff <= 0) {
+        setCountdown({ d: '00', h: '00', m: '00', s: '00' });
+      } else {
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / 1000 / 60) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+        setCountdown({
+          d: String(d).padStart(2, '0'),
+          h: String(h).padStart(2, '0'),
+          m: String(m).padStart(2, '0'),
+          s: String(s).padStart(2, '0'),
+        });
+      }
     }, 1000);
 
     return () => {
       clearInterval(interval);
       clearInterval(cdTimer);
     };
-  }, []);
+  }, [targetDate]);
 
   useEffect(() => {
     if (registration?.status === 'OFFERED' && registration?.expires_at) {
@@ -141,7 +153,7 @@ const Dashboard = () => {
             <div style={{ background: 'var(--gold)', color: '#000', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 'bold' }}>COUNTDOWN</div>
           </div>
           <h2 style={{ color: 'var(--gold)', fontFamily: 'var(--font-pirate)', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
-            SUNDAY, 4 OCT 2026 🧭 08:00 AM
+            {targetDate.toLocaleString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).toUpperCase()}
           </h2>
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
             {[
@@ -168,13 +180,29 @@ const Dashboard = () => {
             ⚓ SCHEDULE DEPARTURE EVENT FOR {registration.ship.name.toUpperCase()}
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-            <input type="text" value="04-10-2026 08:00" readOnly style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--gold)', padding: '0.8rem', borderRadius: '4px', outline: 'none' }} />
-            <button className="btn-primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.8rem', fontSize: '1rem' }}>
+            <input 
+              type="datetime-local" 
+              value={departureInput} 
+              onChange={(e) => setDepartureInput(e.target.value)} 
+              style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--gold)', padding: '0.8rem', borderRadius: '4px', outline: 'none' }} 
+            />
+            <button 
+              className="btn-primary" 
+              onClick={() => setTargetDate(new Date(departureInput))}
+              style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.8rem', fontSize: '1rem' }}
+            >
               💾 UPDATE SCHEDULE
             </button>
           </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <button style={{ flex: 2, background: 'linear-gradient(to right, #8b0000, #b22222)', color: 'var(--white)', border: 'none', padding: '0.8rem', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <button 
+              onClick={() => {
+                const now = new Date();
+                setDepartureInput(now.toISOString().slice(0,16));
+                setTargetDate(now);
+              }}
+              style={{ flex: 2, background: 'linear-gradient(to right, #8b0000, #b22222)', color: 'var(--white)', border: 'none', padding: '0.8rem', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+            >
               🚨 SET SAIL NOW (RAISE ANCHOR)
             </button>
             <button style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--gold)', padding: '0.8rem', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer' }}>
@@ -216,10 +244,10 @@ const Dashboard = () => {
           {/* Grid Background */}
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
           
-          <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'visible' }} preserveAspectRatio="none">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'visible' }}>
             <defs>
               <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
                 <feMerge>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
@@ -228,13 +256,13 @@ const Dashboard = () => {
             </defs>
             {/* Base Path */}
             <path d="M 5 80 C 8 72, 9 65, 12 65 C 16 65, 17 75, 20 75 C 23 75, 24 45, 27 45 C 30 45, 31 70, 33 70 C 36 70, 38 60, 40 60 C 44 60, 45 20, 48 20 C 51 20, 53 80, 55 80 C 58 80, 60 60, 62 60 C 65 60, 66 95, 68 95 C 71 95, 72 65, 74 65 C 76 65, 77 40, 78 40 C 80 40, 81 75, 82 75 C 84 75, 85 35, 86 35 C 88 35, 89 70, 91 70 C 94 70, 95 45, 97 45" 
-                  fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="15" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                  fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
             <path d="M 5 80 C 8 72, 9 65, 12 65 C 16 65, 17 75, 20 75 C 23 75, 24 45, 27 45 C 30 45, 31 70, 33 70 C 36 70, 38 60, 40 60 C 44 60, 45 20, 48 20 C 51 20, 53 80, 55 80 C 58 80, 60 60, 62 60 C 65 60, 66 95, 68 95 C 71 95, 72 65, 74 65 C 76 65, 77 40, 78 40 C 80 40, 81 75, 82 75 C 84 75, 85 35, 86 35 C 88 35, 89 70, 91 70 C 94 70, 95 45, 97 45" 
-                  fill="none" stroke="#111" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                  fill="none" stroke="#111" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
             
             {/* Progress Path */}
             <path d="M 5 80 C 8 72, 9 65, 12 65 C 16 65, 17 75, 20 75 C 23 75, 24 45, 27 45 C 30 45, 31 70, 33 70 C 36 70, 38 60, 40 60 C 44 60, 45 20, 48 20 C 51 20, 53 80, 55 80 C 58 80, 60 60, 62 60 C 65 60, 66 95, 68 95 C 71 95, 72 65, 74 65 C 76 65, 77 40, 78 40 C 80 40, 81 75, 82 75 C 84 75, 85 35, 86 35 C 88 35, 89 70, 91 70 C 94 70, 95 45, 97 45" 
-                  fill="none" stroke="var(--gold)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+                  pathLength="100" fill="none" stroke="var(--gold)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
                   strokeDasharray="100" strokeDashoffset={100 - progress} filter="url(#glow)" style={{ transition: 'stroke-dashoffset 2s ease-in-out' }} />
           </svg>
 

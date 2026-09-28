@@ -166,29 +166,86 @@ const Dashboard = () => {
 
       {registration.status === 'CONFIRMED' && (
         <div style={{ textAlign: 'center', animation: 'sailIn 1s ease' }}>
-          <h2 style={{ color: '#2ecc71', fontSize: '2.5rem', marginBottom: '2rem' }}>🎉 YOUR SHIP HAS BEEN CLEARED FOR UTA'S CONCERT!</h2>
-          
-          <div className="card" style={{ 
-            maxWidth: '500px', 
-            margin: '0 auto', 
-            background: 'linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(0,0,0,0.8) 100%)',
-            border: '2px solid var(--gold)',
-            boxShadow: '0 0 30px rgba(212,175,55,0.3)',
-            position: 'relative'
-          }}>
-            <div style={{ position: 'absolute', top: '-15px', right: '-15px', fontSize: '3rem' }}>🌟</div>
-            <h3 style={{ borderBottom: '2px dashed var(--gold)', paddingBottom: '1rem', marginBottom: '1.5rem', letterSpacing: '3px' }}>GOLDEN GRAND LINE PASS</h3>
-            <p><strong>Pirate:</strong> {registration.pirate_name}</p>
-            <p><strong>Ship:</strong> {registration.ship.name}</p>
-            <p><strong>Ticket:</strong> {registration.ship.price?.toLocaleString()} Berries</p>
-            <p><strong>Status:</strong> <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>CONFIRMED</span></p>
-            <div style={{ margin: '2rem auto 0 auto', width: '150px', height: '150px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}>
-              <div style={{ width: '130px', height: '130px', background: 'repeating-linear-gradient(45deg, #000, #000 10px, #fff 10px, #fff 20px)' }}></div>
+          <h2 style={{ color: '#2ecc71', fontSize: '2.5rem', marginBottom: '2rem' }}>🎉 YOUR VOYAGE IS COMPLETE!</h2>
+          <p style={{ color: 'var(--parchment)', fontSize: '1.2rem', marginBottom: '3rem' }}>Your ship is ready to sail to Uta's Concert.</p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '3rem' }}>
+            {/* Voyage Pass */}
+            <div className="card" style={{ 
+              width: '100%',
+              maxWidth: '400px', 
+              background: 'linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(0,0,0,0.8) 100%)',
+              border: '2px solid var(--gold)',
+              boxShadow: '0 0 30px rgba(212,175,55,0.3)',
+              position: 'relative',
+              textAlign: 'left'
+            }}>
+              <div style={{ position: 'absolute', top: '-15px', right: '-15px', fontSize: '3rem' }}>🌟</div>
+              <h3 style={{ borderBottom: '2px dashed var(--gold)', paddingBottom: '1rem', marginBottom: '1.5rem', letterSpacing: '3px', textAlign: 'center' }}>🏴‍☠️ VOYAGE PASS</h3>
+              
+              <div style={{ fontSize: '1.1rem', lineHeight: '1.8' }}>
+                <p style={{ textAlign: 'center', color: 'var(--gold)', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '1rem' }}>UTA'S CONCERT</p>
+                <p><strong>Captain:</strong> <span style={{ color: 'var(--white)' }}>{registration.pirate_name}</span></p>
+                <p><strong>Ship:</strong> <span style={{ color: 'var(--white)' }}>{registration.ship.name}</span></p>
+                <p><strong>Total:</strong> <span style={{ color: 'var(--white)' }}>{registration.ship.price?.toLocaleString()} 🪙 BERRIES</span></p>
+              </div>
+
+              <div style={{ margin: '2rem auto 0 auto', width: '150px', height: '150px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}>
+                <div style={{ width: '130px', height: '130px', background: 'repeating-linear-gradient(45deg, #000, #000 10px, #fff 10px, #fff 20px)' }}></div>
+              </div>
+              <p style={{ textAlign: 'center', marginTop: '1rem', fontStyle: 'italic', color: 'var(--gold)' }}>"Your voyage awaits, Captain."</p>
+
+              <button className="btn-secondary" style={{ marginTop: '2rem', width: '100%', borderColor: 'var(--red)', color: 'var(--red)' }} onClick={() => handleAction('cancel')}>
+                Abandon Ship (Cancel)
+              </button>
             </div>
-            
-            <button className="btn-secondary" style={{ marginTop: '2rem', width: '100%', borderColor: 'var(--red)', color: 'var(--red)' }} onClick={() => handleAction('cancel')}>
-              Abandon Ship (Cancel)
-            </button>
+
+            {/* Bounty Poster */}
+            <div className="card" style={{ 
+              width: '100%',
+              maxWidth: '350px', 
+              background: 'url(/parchment.jpg) center/cover',
+              backgroundColor: '#e6d5b8', /* fallback */
+              border: '10px solid #5c3a21',
+              boxShadow: 'inset 0 0 20px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.8)',
+              color: '#3e2723',
+              padding: '2rem',
+              fontFamily: 'Times New Roman, serif',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
+              <h2 style={{ fontSize: '3rem', margin: '0 0 1rem 0', color: '#2c1e16', textShadow: 'none', borderBottom: '2px solid #5c3a21', paddingBottom: '0.5rem', width: '100%', textAlign: 'center' }}>
+                ☠️ WANTED ☠️
+              </h2>
+              
+              <div style={{ width: '100%', height: '200px', border: '4px solid #5c3a21', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', background: 'rgba(0,0,0,0.1)' }}>
+                <span style={{ fontSize: '6rem' }}>🧑‍🚀</span>
+              </div>
+              
+              <h1 style={{ fontSize: '2.5rem', color: '#2c1e16', textShadow: 'none', margin: '0 0 0.5rem 0', textTransform: 'uppercase', textAlign: 'center' }}>
+                {registration.pirate_name}
+              </h1>
+              <p style={{ fontStyle: 'italic', fontSize: '1.2rem', marginBottom: '1.5rem', color: '#5c3a21' }}>"THE GRAND LINE RECRUIT"</p>
+              
+              <h3 style={{ fontSize: '1.5rem', color: '#2c1e16', textShadow: 'none', margin: '0 0 1rem 0' }}>
+                BOUNTY: {registration.ship.price?.toLocaleString()} 🪙
+              </h3>
+              
+              <div style={{ width: '100%', fontSize: '1.1rem', fontWeight: 'bold', borderTop: '1px solid #5c3a21', paddingTop: '1rem' }}>
+                <p style={{ margin: '0.5rem 0', color: '#3e2723' }}>SHIP: {registration.ship.name}</p>
+                <p style={{ margin: '0.5rem 0', color: '#3e2723' }}>DESTINATION: UTA'S CONCERT</p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem', width: '100%', marginTop: '2rem' }}>
+                <button style={{ flex: 1, padding: '0.5rem', background: '#3e2723', color: '#e6d5b8', border: 'none', cursor: 'pointer', fontWeight: 'bold' }} onClick={() => alert('Downloading Bounty Poster...')}>
+                  DOWNLOAD
+                </button>
+                <button style={{ flex: 1, padding: '0.5rem', background: '#5c3a21', color: '#e6d5b8', border: 'none', cursor: 'pointer', fontWeight: 'bold' }} onClick={() => alert('Sharing Voyage...')}>
+                  SHARE
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -116,7 +116,19 @@ const Registration = () => {
   if (!selectedShip) {
     return (
       <div className="container" style={{ animation: 'sailIn 1.5s cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
+        <VoyageProgressBar step={1} />
         <div style={{ textAlign: 'center', marginBottom: '3rem', position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <div style={{ border: '3px solid var(--gold)', borderRadius: '50%', width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--primary)', boxShadow: '0 0 20px var(--gold)' }}>
+              🧭
+            </div>
+          </div>
+          <h1>CHOOSE YOUR SHIP</h1>
+          <p style={{ fontSize: '1.2rem', fontStyle: 'italic', color: 'var(--parchment)' }}>
+            Four captains. Four vessels. One legendary concert.
+          </p>
+        </div>
+
         {ships.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '3rem', fontSize: '1.5rem', color: 'var(--gold)' }}>
             <p>Loading the fleet...</p>

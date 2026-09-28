@@ -7,12 +7,28 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [timeRemaining, setTimeRemaining] = useState('');
+  const [countdown, setCountdown] = useState({ d: '05', h: '16', m: '41', s: '08' });
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchRegistration();
     const interval = setInterval(fetchRegistration, 5000);
-    return () => clearInterval(interval);
+    
+    // Live countdown tick
+    const cdTimer = setInterval(() => {
+      const now = new Date();
+      setCountdown({
+        d: '05',
+        h: String(now.getHours()).padStart(2, '0'),
+        m: String(now.getMinutes()).padStart(2, '0'),
+        s: String(now.getSeconds()).padStart(2, '0'),
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(cdTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -116,51 +132,172 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <h2 style={{ color: 'var(--gold)', marginBottom: '1.5rem', textAlign: 'center' }}>🧭 YOUR GRAND LINE JOURNEY</h2>
+      {/* Top Widgets */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
+        {/* Countdown Widget */}
+        <div className="card" style={{ background: '#02101f', border: '1px solid #1a365d', borderRadius: '8px', padding: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ color: 'var(--parchment)', fontSize: '0.9rem', fontWeight: 'bold' }}>📅 SET SAIL DATE & TIME EVENT</div>
+            <div style={{ background: 'var(--gold)', color: '#000', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 'bold' }}>COUNTDOWN</div>
+          </div>
+          <h2 style={{ color: 'var(--gold)', fontFamily: 'var(--font-pirate)', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
+            SUNDAY, 4 OCT 2026 🧭 08:00 AM
+          </h2>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            {[
+              { label: 'DAYS', value: countdown.d },
+              { label: 'HOURS', value: countdown.h },
+              { label: 'MINUTES', value: countdown.m },
+              { label: 'SECONDS', value: countdown.s }
+            ].map((t, i) => (
+              <div key={i} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', padding: '1rem 0', textAlign: 'center' }}>
+                <div style={{ color: 'var(--gold)', fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.2rem' }}>{t.value}</div>
+                <div style={{ color: 'var(--parchment)', fontSize: '0.7rem' }}>{t.label}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--white)' }}>
+            <div>🌊 <span style={{ color: 'var(--parchment)' }}>Tide:</span> <strong>Full Moon Spring Surge</strong></div>
+            <div>🌬️ <span style={{ color: 'var(--parchment)' }}>Wind:</span> <strong>East-South-East (24 Knots)</strong></div>
+          </div>
+        </div>
+
+        {/* Schedule Widget */}
+        <div className="card" style={{ background: '#02101f', border: '1px solid #1a365d', borderRadius: '8px', padding: '1.5rem' }}>
+          <div style={{ color: 'var(--parchment)', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+            ⚓ SCHEDULE DEPARTURE EVENT FOR {registration.ship.name.toUpperCase()}
+          </div>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+            <input type="text" value="04-10-2026 08:00" readOnly style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--gold)', padding: '0.8rem', borderRadius: '4px', outline: 'none' }} />
+            <button className="btn-primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.8rem', fontSize: '1rem' }}>
+              💾 UPDATE SCHEDULE
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button style={{ flex: 2, background: 'linear-gradient(to right, #8b0000, #b22222)', color: 'var(--white)', border: 'none', padding: '0.8rem', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              🚨 SET SAIL NOW (RAISE ANCHOR)
+            </button>
+            <button style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'var(--gold)', padding: '0.8rem', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+              🌅 DAWN TIDE
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Interactive Map */}
       <div className="card" style={{ 
         position: 'relative', 
-        height: '400px', 
-        background: 'linear-gradient(to bottom, #071f3b, #031326)', 
-        border: '4px solid var(--wood-brown)', 
+        background: '#010b14', 
+        border: '1px solid var(--gold)', 
+        borderRadius: '8px',
         overflow: 'hidden',
-        marginBottom: '3rem'
+        marginBottom: '3rem',
+        padding: '0'
       }}>
-        {/* Ocean Background & Waves */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 2px, transparent 2px)', backgroundSize: '40px 40px', opacity: 0.5 }}></div>
-        
-        {/* Route Line */}
-        <div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '4px', borderBottom: '4px dashed rgba(255, 215, 0, 0.3)' }}></div>
-        <div style={{ position: 'absolute', top: '50%', left: '10%', width: `${progress * 0.8}%`, height: '4px', borderBottom: '4px dashed var(--gold)', transition: 'width 2s ease-in-out' }}></div>
-
-        {/* Islands */}
-        <div style={{ position: 'absolute', top: '40%', left: '5%', textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', cursor: 'pointer', transition: 'transform 0.3s' }} onMouseOver={e => e.currentTarget.style.transform='scale(1.2)'} onMouseOut={e => e.currentTarget.style.transform='scale(1)'}>🏝️</div>
-          <div style={{ fontSize: '0.9rem', color: 'var(--parchment)', fontWeight: 'bold' }}>STARTING ISLAND</div>
-        </div>
-        
-        <div style={{ position: 'absolute', top: '40%', left: '45%', textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', cursor: 'pointer', transition: 'transform 0.3s' }} onMouseOver={e => e.currentTarget.style.transform='scale(1.2)'} onMouseOut={e => e.currentTarget.style.transform='scale(1)'}>🧭</div>
-          <div style={{ fontSize: '0.9rem', color: 'var(--parchment)', fontWeight: 'bold' }}>GRAND LINE</div>
-        </div>
-
-        <div style={{ position: 'absolute', top: '35%', right: '5%', textAlign: 'center' }}>
-          <div style={{ fontSize: '4rem', filter: progress === 100 ? 'drop-shadow(0 0 20px var(--gold))' : 'none', transition: 'all 1s' }}>🎤</div>
-          <div style={{ fontSize: '1rem', color: 'var(--gold)', fontWeight: 'bold', textShadow: '1px 1px 2px #000' }}>UTA'S CONCERT</div>
+        {/* Chart Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <div style={{ fontSize: '2rem' }}>🧭</div>
+            <div>
+              <h2 style={{ color: 'var(--gold)', margin: 0, fontSize: '1.2rem', textTransform: 'uppercase' }}>GRAND LINE NAUTICAL CHART: {registration.ship.name}</h2>
+              <div style={{ color: 'var(--parchment)', fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                Speed: <strong>28 Knots</strong> • Current Sector: <strong>{progress >= 100 ? "Elegia" : progress >= 50 ? "Water 7 → Sabaody" : "Reverse Mountain → Drum Island"}</strong>
+              </div>
+            </div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ color: 'var(--parchment)', fontSize: '0.7rem', fontWeight: 'bold', letterSpacing: '1px' }}>GRAND LINE PROGRESS</div>
+            <div style={{ color: 'var(--gold)', fontSize: '1.5rem', fontWeight: 'bold' }}>{progress}% / 100%</div>
+          </div>
         </div>
 
-        {/* The Ship */}
-        <div style={{ 
-          position: 'absolute', 
-          top: '38%', 
-          left: `calc(5% + ${progress * 0.8}%)`, 
-          fontSize: '4rem', 
-          transition: 'left 3s ease-in-out',
-          animation: 'rocking 2s infinite ease-in-out',
-          zIndex: 10
-        }}>
-          {shipIcon}
+        {/* The Map Canvas */}
+        <div style={{ height: '400px', width: '100%', position: 'relative' }}>
+          {/* Grid Background */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+          
+          <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'visible' }} preserveAspectRatio="none">
+            <defs>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Base Path */}
+            <path d="M 5 80 C 8 72, 9 65, 12 65 C 16 65, 17 75, 20 75 C 23 75, 24 45, 27 45 C 30 45, 31 70, 33 70 C 36 70, 38 60, 40 60 C 44 60, 45 20, 48 20 C 51 20, 53 80, 55 80 C 58 80, 60 60, 62 60 C 65 60, 66 95, 68 95 C 71 95, 72 65, 74 65 C 76 65, 77 40, 78 40 C 80 40, 81 75, 82 75 C 84 75, 85 35, 86 35 C 88 35, 89 70, 91 70 C 94 70, 95 45, 97 45" 
+                  fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="15" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+            <path d="M 5 80 C 8 72, 9 65, 12 65 C 16 65, 17 75, 20 75 C 23 75, 24 45, 27 45 C 30 45, 31 70, 33 70 C 36 70, 38 60, 40 60 C 44 60, 45 20, 48 20 C 51 20, 53 80, 55 80 C 58 80, 60 60, 62 60 C 65 60, 66 95, 68 95 C 71 95, 72 65, 74 65 C 76 65, 77 40, 78 40 C 80 40, 81 75, 82 75 C 84 75, 85 35, 86 35 C 88 35, 89 70, 91 70 C 94 70, 95 45, 97 45" 
+                  fill="none" stroke="#111" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+            
+            {/* Progress Path */}
+            <path d="M 5 80 C 8 72, 9 65, 12 65 C 16 65, 17 75, 20 75 C 23 75, 24 45, 27 45 C 30 45, 31 70, 33 70 C 36 70, 38 60, 40 60 C 44 60, 45 20, 48 20 C 51 20, 53 80, 55 80 C 58 80, 60 60, 62 60 C 65 60, 66 95, 68 95 C 71 95, 72 65, 74 65 C 76 65, 77 40, 78 40 C 80 40, 81 75, 82 75 C 84 75, 85 35, 86 35 C 88 35, 89 70, 91 70 C 94 70, 95 45, 97 45" 
+                  fill="none" stroke="var(--gold)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+                  strokeDasharray="100" strokeDashoffset={100 - progress} filter="url(#glow)" style={{ transition: 'stroke-dashoffset 2s ease-in-out' }} />
+          </svg>
+
+          {/* Islands Markers */}
+          {[
+            { name: 'Reverse Mountain', icon: '⛰️', x: 5, y: 80 },
+            { name: 'Whisky Peak', icon: '🌵', x: 12, y: 65 },
+            { name: 'Little Garden', icon: '🦕', x: 20, y: 75 },
+            { name: 'Drum Island', icon: '❄️', x: 27, y: 45 },
+            { name: 'Alabasta', icon: '🏜️', x: 33, y: 70 },
+            { name: 'Jaya', icon: '✖️', x: 40, y: 60 },
+            { name: 'Skypiea', icon: '☁️', x: 48, y: 20 },
+            { name: 'Water 7', icon: '⛲', x: 55, y: 80 },
+            { name: 'Enies Lobby', icon: '⚖️', x: 62, y: 60 },
+            { name: 'Fishman Island', icon: '🧜‍♀️', x: 68, y: 95 },
+            { name: 'Sabaody', icon: '🫧', x: 74, y: 65 },
+            { name: 'Dressrosa', icon: '🌻', x: 78, y: 40 },
+            { name: 'Zou', icon: '🐘', x: 82, y: 75 },
+            { name: 'Wano Kuni', icon: '🌸', x: 86, y: 35 },
+            { name: 'Egghead', icon: '🤖', x: 91, y: 70 },
+            { name: 'Elegia (Concert)', icon: '🎵', x: 97, y: 45 },
+          ].map((island, i) => {
+            // Determine if the island has been reached based on progress (rough approximation)
+            const islandProgressRequired = (i / 15) * 100;
+            const isReached = progress >= islandProgressRequired;
+            return (
+              <div key={island.name} style={{ position: 'absolute', top: `${island.y}%`, left: `${island.x}%`, transform: 'translate(-50%, -50%)', textAlign: 'center', zIndex: 10 }}>
+                <div style={{ 
+                  width: '30px', height: '30px', borderRadius: '50%', 
+                  background: isReached ? 'var(--gold)' : '#111', 
+                  border: `2px solid ${isReached ? '#fff' : 'rgba(255,255,255,0.2)'}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1rem', boxShadow: isReached ? '0 0 15px var(--gold)' : 'none',
+                  transition: 'all 1s ease',
+                  margin: '0 auto'
+                }}>
+                  {island.icon}
+                </div>
+                <div style={{ color: isReached ? 'var(--white)' : 'var(--parchment)', fontSize: '0.7rem', marginTop: '0.3rem', fontWeight: 'bold', whiteSpace: 'nowrap', textShadow: '1px 1px 2px #000', transition: 'color 1s ease' }}>
+                  {island.name}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* The Ship Icon (Overlay) */}
+          <div style={{ 
+            position: 'absolute', 
+            top: progress >= 100 ? '45%' : progress >= 50 ? '80%' : '75%', // Rough approx of Y coordinate based on progress checkpoints
+            left: `calc(5% + ${progress * 0.9}%)`, 
+            transform: 'translate(-50%, -50%)',
+            fontSize: '3rem', 
+            transition: 'all 2s ease-in-out',
+            animation: 'rocking 2s infinite ease-in-out',
+            zIndex: 20,
+            filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.8))',
+            background: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: '50%',
+            padding: '5px',
+            border: '2px solid var(--gold)'
+          }}>
+            {shipIcon}
+          </div>
         </div>
       </div>
 

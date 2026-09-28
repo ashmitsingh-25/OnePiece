@@ -25,6 +25,11 @@ const Navigation = () => {
           <Link to="/crew" className={location.pathname === '/crew' ? 'active' : ''}>My Crew</Link>
           <Link to="/admin" className={location.pathname === '/admin' ? 'active' : ''}>Control Room</Link>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{ color: 'var(--gold)', fontWeight: 'bold', textShadow: '1px 1px 2px #000' }}>
+            💰 125,000 Berries
+          </div>
+        </div>
       </nav>
     </div>
   );

@@ -122,26 +122,35 @@ const Registration = () => {
                   <h2 style={{ fontSize: '2.5rem', textShadow: '2px 2px 8px #000', marginBottom: '1rem' }}>{ship.name}</h2>
                   
                   <div style={{ background: 'rgba(0,0,0,0.7)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--gold)' }}>
-                    <div className="progress-container">
+                    <div className="progress-container" style={{ marginBottom: '1rem' }}>
                       <div className="progress-bar" style={{ 
                         width: `${Math.min(percentage, 100)}%`,
                         background: isFull ? 'var(--red)' : 'var(--gold)'
                       }}></div>
                     </div>
                     
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: 'bold' }}>
-                      <span>{ship.totalOccupied} / {ship.capacity} CLAIMED</span>
-                      <span>{ship.capacity - ship.totalOccupied} SEATS REMAIN</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '1.1rem', fontWeight: 'bold' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>{ship.totalOccupied} / {ship.capacity} SEATS CLAIMED</span>
+                        <span>{isFull ? `${ship.waitlistCount || 0} WAITLISTED` : `${ship.capacity - ship.totalOccupied} SEATS AVAILABLE`}</span>
+                      </div>
+                      <div style={{ color: 'var(--gold)', fontSize: '1.3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0.5rem 0' }}>
+                        🎟️ {ship.price?.toLocaleString()} Berries
+                      </div>
                     </div>
                     
-                    <div style={{ marginTop: '1rem', fontSize: '1.2rem' }}>
+                    <div style={{ marginTop: '0.5rem', fontSize: '1.2rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
                       {isFull ? (
-                        <div className="red-text" style={{ animation: 'flash 2s infinite' }}>
-                          🔴 SHIP FULL <br/>
-                          <span style={{ fontSize: '0.9rem', color: 'var(--white)' }}>GRAND LINE WAITLIST OPEN</span>
-                        </div>
+                        <>
+                          <div className="red-text">🔴 SHIP FULL</div>
+                          <div style={{ fontSize: '1rem', color: 'var(--white)' }}>⚓ WAITLIST OPEN</div>
+                          <button className="btn-primary" style={{ width: '100%', marginTop: '0.5rem' }}>[ JOIN WAITLIST ]</button>
+                        </>
                       ) : (
-                        <div className="green-text">🟢 OPEN FOR BOARDING</div>
+                        <>
+                          <div className="green-text">🟢 OPEN FOR BOARDING</div>
+                          <button className="btn-primary" style={{ width: '100%', marginTop: '1.5rem' }}>[ BOARD THIS SHIP ]</button>
+                        </>
                       )}
                     </div>
                   </div>
@@ -169,20 +178,24 @@ const Registration = () => {
         <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', animation: 'sailIn 0.8s ease' }}>
           <div style={{ border: '3px solid var(--gold)', borderRadius: '15px', overflow: 'hidden', boxShadow: '0 10px 40px rgba(0,0,0,0.8)' }}>
             <img src={shipImages[selectedShip.id]} style={{ width: '100%', height: '300px', objectFit: 'cover' }} alt={selectedShip.name} />
-            <div style={{ background: 'rgba(7, 30, 61, 0.9)', padding: '3rem' }}>
+              <div style={{ background: 'rgba(7, 30, 61, 0.9)', padding: '3rem' }}>
               <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>☠️</div>
               <h1 style={{ fontSize: '3rem' }}>{selectedShip.name}</h1>
               <h3 style={{ color: 'var(--parchment)', marginBottom: '2rem' }}>GRAND LINE SECTION</h3>
               
               <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-                <span style={{ color: 'var(--gold)', fontWeight: 'bold' }}>{selectedShip.totalOccupied} / {selectedShip.capacity} CLAIMED</span>
+                <span style={{ color: 'var(--gold)', fontWeight: 'bold' }}>{selectedShip.totalOccupied} / {selectedShip.capacity} SEATS CLAIMED</span>
               </div>
               
+              <div style={{ fontSize: '2rem', color: 'var(--gold)', marginBottom: '1.5rem', fontWeight: 'bold' }}>
+                🎟️ {selectedShip.price?.toLocaleString()} Berries
+              </div>
+
               <div style={{ marginBottom: '2rem', fontSize: '1.2rem' }}>
                 {isFull ? (
                   <div>
-                    <span className="red-text" style={{ fontWeight: 'bold' }}>THIS SHIP HAS REACHED ITS MAXIMUM CREW.</span>
-                    <p style={{ marginTop: '0.5rem' }}>BUT YOUR VOYAGE DOESN'T HAVE TO END HERE.</p>
+                    <span className="red-text" style={{ fontWeight: 'bold' }}>🔴 SHIP FULL</span>
+                    <p style={{ marginTop: '0.5rem', color: 'var(--parchment)' }}>Every cabin aboard this vessel has been claimed.</p>
                   </div>
                 ) : (
                   <span className="green-text" style={{ fontWeight: 'bold' }}>🟢 OPEN FOR BOARDING</span>
@@ -193,7 +206,7 @@ const Registration = () => {
 
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
                 <button className="btn-primary" onClick={handleBoardClick}>
-                  {isFull ? 'JOIN THE GRAND LINE QUEUE' : 'BOARD THIS SHIP'}
+                  {isFull ? 'JOIN THE GRAND LINE WAITLIST' : 'BOARD THIS SHIP'}
                 </button>
                 <button className="btn-secondary" onClick={() => setSelectedShip(null)}>
                   VIEW OTHER SHIPS

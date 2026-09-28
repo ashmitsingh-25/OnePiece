@@ -104,9 +104,18 @@ const Admin = () => {
           return (
             <div key={ship.id} className="card">
               <h2>{ship.name}</h2>
-              <p style={{ marginBottom: '1rem', borderBottom: '1px solid var(--gold)', paddingBottom: '0.5rem' }}>
-                {ship.totalOccupied} / {ship.capacity} Seats Used
-              </p>
+              <div style={{ marginBottom: '1rem', borderBottom: '1px solid var(--gold)', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span>Capacity: {ship.capacity}</span>
+                  <span style={{ color: 'var(--gold)', fontWeight: 'bold' }}>{ship.price?.toLocaleString()} Berries</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--parchment)' }}>
+                  <div>Confirmed: <span style={{ color: '#2ecc71' }}>{ship.confirmedCount}</span></div>
+                  <div>Available: {ship.capacity - ship.totalOccupied}</div>
+                  <div>Waitlist: <span style={{ color: 'var(--gold)' }}>{ship.waitlistCount}</span></div>
+                  <div>Active Offers: <span style={{ color: '#3498db' }}>{ship.offeredCount}</span></div>
+                </div>
+              </div>
               
               <div style={{ marginBottom: '1rem' }}>
                 <h4 style={{ color: '#3498db' }}>ACTIVE OFFERS ({offers.length})</h4>
